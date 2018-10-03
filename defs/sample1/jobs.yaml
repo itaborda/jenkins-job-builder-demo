@@ -1,0 +1,18 @@
+- project:
+    name: 'Sample1 All Jobs'
+    group: sample1
+    repo: '{group}-{module}/{project}' # fix to corp atual
+    jobs:
+      - job-group-envs:
+          module: sync
+          project:
+            - owner-data
+            - client-data
+      - job-group-envs:
+          module: api
+          project:
+            - client
+            - gateway
+          builders:
+          - trigger-builds:
+              - project: owner-data2

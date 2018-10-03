@@ -1,0 +1,49 @@
+- project:
+    name: 'Sample2 Top-Level views'
+    #description: 'Override it'
+    views:
+      - list-view-template:
+          name: sample2
+
+- project:
+    name: 'Sample2 Top-Level folders'
+    group: sample2
+    jobs:
+      - folder-template-pipeline-views:
+          pipeline_name: 'Pipeline Full'
+          folder:
+            - web-full
+            - service-full
+            - batch-full
+          components:
+            - name: 'Build {folder}'
+              job: '{folder}-build'
+      - folder-template-views:
+          folder:
+            - sales
+            - order
+            - account
+          module:
+            - Common
+            - Persistence
+            - Client
+            - Web
+            - Service
+            - Batch
+          subviews:
+            - sublist-view-template:
+                name: '{module}'
+                path-separator: '-'
+                parent: 'folder'
+            - wf-pipeline-view-template:
+                name: 'Pipeline'
+                components:
+                  - name: 'Build web'
+                    job: 'web-build'
+                  - name: 'Build service'
+                    job: 'service-build'
+                  - name: 'Build batch'
+                    job: 'batch-build'
+            - all:
+                parent: 'folder'
+                name: All

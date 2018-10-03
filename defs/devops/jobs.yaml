@@ -1,0 +1,32 @@
+- job-template:
+    id: job-template-iac
+    name: '{group}_{module}/{project}-{subproject}'
+    defaults:
+      - gitlab_scm_defaults
+    project-type: multibranch
+    script-path: 'Jenkinsfile'
+    scm:
+      - git:
+          url: '{git-url}{repo}.git'
+          credentials-id: '{git-credentials-id}'
+    sandbox: false
+
+- project:
+    name: 'DevOps All Jobs'
+    group: devops
+    jobs:
+      - job-template-iac:
+          module: iac
+          repo: 'gcsc/ci_cd/{module}/{project}/{subproject}' # fix to corp atual
+          project:
+            - jenkins
+            - gitlab
+          subproject:
+            - docker-image
+            - job-builder #rename -> builder
+            - plugins-fix #rename -> plugins
+      - job-template-single:
+          repo: '{group}/ci_cd/{module}/{project}' # fix to corp atual
+          module: others
+          project:
+            - devops-files

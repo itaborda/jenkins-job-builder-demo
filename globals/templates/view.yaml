@@ -1,0 +1,92 @@
+- nested_view_defaults: &nested_view_defaults
+    name: "{name}"
+    description: "Top-Level Views to {name}'s Projects"
+    view-type: '{view_type|nested}'
+    filter-executors: true
+    filter-queue: true
+    columns:
+      - status
+      - weather
+
+- defaults:
+    name: nested_view_defaults
+    <<: *nested_view_defaults
+
+- list_view_defaults: &list_view_defaults
+    <<: *nested_view_defaults
+    path-separator: '_'
+    regex: "(?i)({name}{path-separator}.*).*"
+    view-type: '{view_type|list}'
+    columns:
+      - status
+      - weather
+      - job
+      - last-success
+      - last-failure
+      - last-duration
+      - build-button
+
+- defaults:
+    name: list_view_defaults
+    <<: *list_view_defaults
+
+- wf_pipeline_view_defaults: &wf_pipeline_view_defaults
+    name: '{pipeline_name|Pipeline}'
+    build-view-title: "{name}"
+    view-type: 'workflow_pipeline'
+    filter-executors: false
+    filter-queue: false
+    parent: 'folder'
+    components: '{obj:components}'
+    number-of-pipelines: 3
+    show-aggregated-pipeline: true
+    number-of-columns: 1
+    sorting: none
+    show-avatars: false
+    update-interval: 1
+    allow-manual-triggers: true
+    show-total-buildtime: true
+    allow-rebuild: true
+    allow-pipeline-start: true
+
+- defaults:
+    name: wf_pipeline_view_defaults
+    <<: *wf_pipeline_view_defaults
+
+- view-template:
+    id: sublist-view-template
+    <<: *list_view_defaults
+    view_type: 'sublist'
+    parent: '{parent|nested}'
+    path-separator: '_'
+    regex: "(?i)({name}{path-separator}.*).*"
+    description: '{description}'
+
+- view-template:
+    id: list-view-template
+    <<: *list_view_defaults
+    view_type: 'list'
+    path-separator: '_'
+    regex: "(?i)({name}{path-separator}.*).*"
+    description: '{description}'
+
+- view-template:
+    id: nested-view-template
+    <<: *nested_view_defaults
+    view_type: 'nested_root'
+    description: '{description}'
+    subviews:
+    views: '{obj:subviews}'
+
+- view-template:
+    id: subnested-view-template
+    <<: *nested_view_defaults
+    view_type: 'nested'
+    description: '{description}'
+    parent: '{parent|nested}'
+    subviews:
+    views: '{obj:subviews}'
+
+- view-template:
+    id: wf-pipeline-view-template
+    <<: *wf_pipeline_view_defaults

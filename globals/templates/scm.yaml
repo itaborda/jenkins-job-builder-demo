@@ -1,0 +1,9 @@
+- gitlab_scm_defaults: &gitlab_scm_defaults
+    name: '{name}'
+    #repo: '{group}/{subgroup}/{module}/{project}'
+    git-url: 'git@git-url.local:'
+    git-credentials-id: 'gitlab_corp_sshkey'
+
+- defaults:
+    name: gitlab_scm_defaults
+    <<: *gitlab_scm_defaults

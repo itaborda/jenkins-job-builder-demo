@@ -1,0 +1,22 @@
+- project:
+    name: 'DevOps Top-Level views'
+    #description: 'Override it'
+    views:
+      - list-view-template:
+          name: DevOps
+
+- project:
+    name: 'DevOps Top-Level folders'
+    group: devops
+    jobs:
+      - folder-template-list-views:
+          folder: iac
+          display-name: 'Devops - IAC'
+          sublist:
+            - Jenkins
+            - Gitlab
+      - folder-template-list-views:
+          folder: others
+          display-name: 'Devops - Others'
+          sublist:
+            - other-project

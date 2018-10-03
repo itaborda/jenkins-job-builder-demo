@@ -1,0 +1,25 @@
+- project:
+    name: 'Sample1 Top-Level views'
+    #description: 'Override it'
+    views:
+      - list-view-template:
+          name: Sample1
+
+- project:
+    name: 'Sample1 Top-Level folders'
+    group: sample1
+    jobs:
+      - folder-template-pipeline-views:
+          folder: sync
+          components:
+            - name: Build sync-owner-data
+              job: 'sync-owner-data-build'
+            - name: Build sync-client-data
+              job: 'sync-client-data-build'
+      - folder-template-pipeline-views:
+          folder: api
+          components:
+            - name: Client Api
+              job: 'api-client-build'
+            - name: Gateway Api
+              job: 'api-gateway-build'

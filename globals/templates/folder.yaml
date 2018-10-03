@@ -1,0 +1,88 @@
+- folder_list_defaults: &folder_list_defaults
+    name: '{group}_{folder}'
+    display-name: '{folder}'
+    project-type: folder
+    sublist:
+    views:
+      - sublist-view-template:
+          name: '{sublist}'
+          path-separator: '-'
+          parent: 'folder'
+      - all:
+          parent: 'folder'
+          name: All
+
+- defaults:
+    name: folder_list_defaults
+    <<: *folder_list_defaults
+
+- folder_nested_defaults: &folder_nested_defaults
+    name: '{group}_{folder}'
+    display-name: '{folder}'
+    project-type: folder
+    subviews:
+    views:
+      - subnested-view-template:
+          name: '{module}'
+          subviews: '{obj:subviews}'
+          parent: 'folder'
+      - all:
+          parent: 'folder'
+          name: All
+
+- defaults:
+    name: folder_nested_defaults
+    <<: *folder_nested_defaults
+
+- folder_pipeline_defaults: &folder_pipeline_defaults
+    name: '{group}_{folder}'
+    display-name: '{folder}'
+    project-type: folder
+    components:
+    pipeline_name:
+    views:
+      - wf-pipeline-view-template:
+          name: '{pipeline_name|Pipeline}'
+          components: '{obj:components}'
+      - all:
+          parent: 'folder'
+          name: All
+
+- defaults:
+    name: folder_pipeline_defaults
+    <<: *folder_pipeline_defaults
+
+- job-template:
+    id: 'folder-template'
+    name: '{group}_{folder}'
+    display-name: '{folder}'
+    project-type: folder
+
+- job-template:
+    id: 'folder-template-views'
+    name: '{group}_{folder}'
+    display-name: '{folder}'
+    project-type: folder
+    subviews:
+    views: '{obj:subviews}'
+
+- job-template:
+    id: 'folder-template-list-views'
+    <<: *folder_list_defaults
+    name: '{group}_{folder}'
+
+- job-template:
+    id: 'folder-template-nested-views'
+    <<: *folder_nested_defaults
+    name: '{group}_{folder}'
+
+- job-template:
+    id: 'folder-template-pipeline-views'
+    <<: *folder_pipeline_defaults
+    name: '{group}_{folder}'
+
+- job-template:
+    id: 'subfolder-template-pipeline-views'
+    <<: *folder_pipeline_defaults
+    name: '{group}_{folder}/{subfolder}'
+    display-name: '{folder}-{subfolder}'

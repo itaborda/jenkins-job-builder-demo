@@ -1,0 +1,95 @@
+- job_template_defaults: &job_template_defaults
+    name: '{group}_{module}/{project}'
+    project-type: pipeline #multibranch-defaults
+    scm:
+      - git:
+          url: '{git-url}{repo}.git'
+          credentials-id: '{git-credentials-id}'
+          branches:
+            - '$BRANCH'
+    pipeline-scm:
+      scm:
+        - git:
+            url: '{git-url}{repo}.git'
+            credentials-id: '{git-credentials-id}'
+            branches:
+              - '$BRANCH'
+    sandbox: false
+
+- defaults:
+    name: job_template_defaults
+    <<: *job_template_defaults
+
+- job-template:
+    id: job-template-single
+    name: '{group}_{module}/{project}'
+    subgroup: 'app'
+    repo: '{group}/{module}/{subgroup}/{project}'
+    defaults:
+      - job_template_defaults
+      - gitlab_scm_defaults
+
+- job-template:
+    id: job-template-build
+    name: '{group}_{module}/{project}-build'
+    subgroup: 'app'
+    repo: '{group}/{module}/{subgroup}/{project}'
+    defaults:
+      - job_template_defaults
+      - gitlab_scm_defaults
+    properties:
+      - delivery-pipeline: #se.diabol.jenkins.pipeline.PipelineProperty cannot be cast to com.cloudbees.hudson.plugins.folder.AbstractFolderProperty
+          stage: Build
+          task: Build
+          description: Build for project {name}
+    parameters:
+      - git-parameter:
+          name: BRANCH
+          description: Select a branch
+          type: PT_BRANCH_TAG
+          branchFilter: 'origin/(master|develop|feature/.*|delivery/.*)'
+          sortMode: ASCENDING
+          defaultValue: master
+          selectedValue: TOP
+          quickFilterEnabled: true
+
+- job-template:
+    id: job-template-deploy
+    name: '{group}_{module}/{project}-deploy-{env}'
+    subgroup: 'app'
+    repo: '{group}/{module}/{subgroup}/{project}'
+    defaults:
+      - job_template_defaults
+      - gitlab_scm_defaults
+    sandbox: false
+    properties:
+      - delivery-pipeline: #se.diabol.jenkins.pipeline.PipelineProperty cannot be cast to com.cloudbees.hudson.plugins.folder.AbstractFolderProperty
+          stage: Deploy
+          task: Deploy to {env}
+          description: Deploy for project {name} in {env}
+
+- job-template:
+    id: job-template-tests
+    name: '{group}_{module}/{project}-tests-{env}'
+    subgroup: 'tests'
+    repo: '{group}/{module}/{subgroup}/{project}'
+    defaults:
+      - job_template_defaults
+      - gitlab_scm_defaults
+    properties:
+      - delivery-pipeline: #se.diabol.jenkins.pipeline.PipelineProperty cannot be cast to com.cloudbees.hudson.plugins.folder.AbstractFolderProperty
+          stage: Tests
+          task: Tests to {env}
+          description: Tests for project {name} in {env}
+
+- job-group:
+    id: job-group-envs
+    name: '{group}_{module}/{project}'
+    jobs:
+      - job-template-build:
+      - job-template-deploy:
+          env:
+            - dev
+            - ti
+            - hml
+            - prd

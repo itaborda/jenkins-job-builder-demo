@@ -1,0 +1,19 @@
+- project:
+    name: 'Sample2 All Jobs'
+    group: sample2
+    module:
+      - sales
+      - order
+      - account
+    repo: '{group}/app/{module}/{project}' # fix to corp atual
+    jobs:
+      - job-template-build:
+          project:
+            - common
+            - persistence
+            - client
+      - job-group-envs:
+          project:
+            - service
+            - web
+            - batch
